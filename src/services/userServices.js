@@ -17,8 +17,10 @@ const createUserService = async (userData) => {
         console.log(">>>check user: ", user);
         return user;
     } catch (error) {
-        console.log(error);
-
+        if (error.code === 11000) {
+            return { error: "Email đã tồn tại, vui lòng chọn email khác." };
+        }
+        return { error: "Đã có lỗi xảy ra, vui lòng thử lại." };
     }
 }
 

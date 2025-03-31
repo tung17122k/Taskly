@@ -3,12 +3,16 @@ const { createUserService } = require("../services/userServices")
 
 const createUser = async (req, res) => {
     const result = await createUserService(req.body)
-    if (result) {
-        return res.status(200).json({
-            data: result,
-            message: "create user success"
+    if (result.error) {
+        return res.status(400).json({
+            message: result.error,
+            errorCode: 400,
         })
     }
+    return res.status(200).json({
+        data: result,
+        message: "create user success"
+    })
 }
 
 module.exports = {
