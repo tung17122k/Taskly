@@ -6,6 +6,13 @@ var jwt = require('jsonwebtoken');
 
 const createUserService = async (userData) => {
     const { username, email, password } = userData;
+    // check if user exists
+
+    const user = await User.findOne({ email }).exec();
+    if (user) {
+        return { error: "Email đã tồn tại, vui lòng chọn email khác." };
+    }
+
     //hash password
     const hashPassword = await bcrypt.hash(password, saltRounds);
     try {
@@ -13,16 +20,38 @@ const createUserService = async (userData) => {
             username,
             email,
             password: hashPassword,
-            role: "user",
+            // role: "customer",
         });
 
         return user;
     } catch (error) {
-        if (error.code === 11000) {
-            return { error: "Email đã tồn tại, vui lòng chọn email khác." };
+
+        return { error: error };
+    }
+}
+
+const getUserService = async (limit, page) => {
+    try {
+        let result = [];
+        let total = 0
+        total = await User.countDocuments({}).exec();
+
+        if (limit && page) {
+            result = await User.find({}).limit(limit).skip(parseInt((page - 1) * limit)).select("-password").exec();
+        } else {
+            result = await User.find({}).select("-password").exec();
         }
+        console.log("result", result);
+
+        return {
+            data: result,
+            total: total
+        };
+    } catch (error) {
+        console.log(error);
         return { error: "Đã có lỗi xảy ra, vui lòng thử lại." };
     }
+
 }
 
 const loginService = async (email, password) => {
@@ -108,5 +137,6 @@ const refreshTokenService = async (refreshToken) => {
 module.exports = {
     createUserService,
     loginService,
-    refreshTokenService
+    refreshTokenService,
+    getUserService
 }

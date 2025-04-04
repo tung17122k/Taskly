@@ -1,8 +1,10 @@
 const User = require("../models/user")
-const { createUserService, loginService, refreshTokenService } = require("../services/userServices")
+const { createUserService, loginService, refreshTokenService, getUserService } = require("../services/userServices")
 
 const createUser = async (req, res) => {
     const result = await createUserService(req.body)
+    console.log(">>>result", result);
+
     if (result.error) {
         return res.status(400).json({
             message: result.error,
@@ -14,6 +16,18 @@ const createUser = async (req, res) => {
         message: "create user success"
     })
 }
+
+const getUser = async (req, res) => {
+    const { limit, page } = req.query
+    const result = await getUserService(limit, page)
+
+    return res.status(200).json({
+        data: result.data,
+        total: result.total,
+        message: "get user success"
+    })
+}
+
 
 const handleLogin = async (req, res) => {
     const { email, password } = req.body;
@@ -72,8 +86,11 @@ const handleRefreshToken = async (req, res) => {
     });
 }
 
+
+
 module.exports = {
     createUser,
+    getUser,
     handleLogin,
     handleRefreshToken
 }
