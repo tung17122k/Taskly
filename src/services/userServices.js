@@ -41,7 +41,7 @@ const getUserService = async (limit, page) => {
         } else {
             result = await User.find({}).select("-password").exec();
         }
-        console.log("result", result);
+
 
         return {
             data: result,
@@ -59,6 +59,7 @@ const loginService = async (email, password) => {
         //fetch user by email
         const user = await User.findOne({ email: email }).exec();
 
+
         if (!user) {
             return {
                 EC: 1,
@@ -74,6 +75,7 @@ const loginService = async (email, password) => {
             const payload = {
                 email: user.email,
                 username: user.username,
+                role: user.role,
             }
             const access_token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE, });
             const refresh_token = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
@@ -87,6 +89,7 @@ const loginService = async (email, password) => {
                 user: {
                     email: user.email,
                     username: user.username,
+                    role: user.role,
                 }
             };
         }
@@ -119,6 +122,7 @@ const refreshTokenService = async (refreshToken) => {
         const payload = {
             email: decoded.email,
             username: decoded.username,
+            role: decoded.role,
         };
 
         const newAccessToken = jwt.sign(
