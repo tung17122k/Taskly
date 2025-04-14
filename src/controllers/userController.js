@@ -3,7 +3,7 @@ const { createUserService, loginService, refreshTokenService, getUserService } =
 
 const createUser = async (req, res) => {
     const result = await createUserService(req.body)
-    console.log(">>>result", result);
+
 
     if (result.error) {
         return res.status(400).json({
