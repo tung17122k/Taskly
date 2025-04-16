@@ -1,5 +1,5 @@
 const User = require("../models/user")
-const { createUserService, loginService, refreshTokenService, getUserService } = require("../services/userServices")
+const { createUserService, loginService, refreshTokenService, getUserService, updateUserService, deleteAUserService } = require("../services/userServices")
 
 const createUser = async (req, res) => {
     const result = await createUserService(req.body)
@@ -26,6 +26,40 @@ const getUser = async (req, res) => {
         total: result.total,
         message: "get user success"
     })
+}
+
+const putUpdateUser = async (req, res) => {
+    let user = await updateUserService(req.body);
+    if (user) {
+        return res.status(200).json({
+            message: "Cập nhật thành công",
+            data: user,
+            errorCode: 0,
+        });
+    } else {
+        return res.status(400).json({
+            message: "Cập nhật không thành công",
+            errorCode: 1,
+        });
+    }
+}
+
+const deleteUser = async (req, res) => {
+    let result = await deleteAUserService(req.body.userId)
+
+
+    if (!result.error) {
+        return res.status(200).json({
+            message: "Xóa thành công",
+            errorCode: 0,
+            result: result,
+        });
+    } else {
+        return res.status(400).json({
+            message: "Xóa không thành công",
+            errorCode: 1,
+        });
+    }
 }
 
 
@@ -92,10 +126,17 @@ const getAccount = async (req, res) => {
 
 
 
+
+
+
+
 module.exports = {
     createUser,
     getUser,
     handleLogin,
     handleRefreshToken,
-    getAccount
+    getAccount,
+    putUpdateUser,
+    deleteUser
+
 }

@@ -54,6 +54,28 @@ const getUserService = async (limit, page) => {
 
 }
 
+
+const updateUserService = async (data) => {
+    let { username, role, userId } = data;
+    try {
+        let result = await User.updateOne({ _id: userId }, { username, role }).exec();
+        return result;
+    } catch (error) {
+        console.log(error);
+        return { error: "Đã có lỗi xảy ra, vui lòng thử lại." };
+    }
+}
+
+const deleteAUserService = async (userId) => {
+    try {
+        let result = await User.deleteById({ _id: userId }).exec();
+        return result
+    } catch (error) {
+        console.log(error);
+        return { error: "Đã có lỗi xảy ra, vui lòng thử lại." };
+    }
+}
+
 const loginService = async (email, password) => {
     try {
         //fetch user by email
@@ -138,9 +160,13 @@ const refreshTokenService = async (refreshToken) => {
     }
 }
 
+
+
 module.exports = {
     createUserService,
     loginService,
     refreshTokenService,
-    getUserService
+    getUserService,
+    updateUserService,
+    deleteAUserService
 }
