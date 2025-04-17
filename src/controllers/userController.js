@@ -30,7 +30,7 @@ const getUser = async (req, res) => {
 
 const putUpdateUser = async (req, res) => {
     let user = await updateUserService(req.body);
-    if (user) {
+    if (!user?.error) {
         return res.status(200).json({
             message: "Cập nhật thành công",
             data: user,
