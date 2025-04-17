@@ -57,6 +57,9 @@ const getUserService = async (limit, page) => {
 
 const updateUserService = async (data) => {
     let { username, role, userId } = data;
+    if (!userId) {
+        return { error: "Đã có lỗi xảy ra, vui lòng thử lại." };
+    }
     try {
         let result = await User.updateOne({ _id: userId }, { username, role }).exec();
         return result;
