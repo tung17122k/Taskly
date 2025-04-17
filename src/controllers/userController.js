@@ -1,8 +1,10 @@
 const User = require("../models/user")
-const { createUserService, loginService, refreshTokenService } = require("../services/userServices")
+const { createUserService, loginService, refreshTokenService, getUserService, updateUserService, deleteAUserService } = require("../services/userServices")
 
 const createUser = async (req, res) => {
     const result = await createUserService(req.body)
+
+
     if (result.error) {
         return res.status(400).json({
             message: result.error,
@@ -15,13 +17,72 @@ const createUser = async (req, res) => {
     })
 }
 
+const getUser = async (req, res) => {
+    const { limit, page } = req.query
+    const result = await getUserService(limit, page)
+
+    return res.status(200).json({
+        data: result.data,
+        total: result.total,
+        message: "get user success"
+    })
+}
+
+const putUpdateUser = async (req, res) => {
+    let user = await updateUserService(req.body);
+    if (user) {
+        return res.status(200).json({
+            message: "Cập nhật thành công",
+            data: user,
+            errorCode: 0,
+        });
+    } else {
+        return res.status(400).json({
+            message: "Cập nhật không thành công",
+            errorCode: 1,
+        });
+    }
+}
+
+const deleteUser = async (req, res) => {
+    let result = await deleteAUserService(req.body.userId)
+
+
+    if (!result.error) {
+        return res.status(200).json({
+            message: "Xóa thành công",
+            errorCode: 0,
+            result: result,
+        });
+    } else {
+        return res.status(400).json({
+            message: "Xóa không thành công",
+            errorCode: 1,
+        });
+    }
+}
+
+
 const handleLogin = async (req, res) => {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({
+            EC: 1,
+            message: "Email và password là bắt buộc"
+        });
+    }
+
     const data = await loginService(email, password);
 
-    if (!data || data.EC) {
-        return res.status(400).json({ message: data.message });
+    if (data.EC !== 0) {
+        return res.status(400).json({
+            EC: data.EC,
+            message: data.message,
+            data: null
+        });
     }
+
     res.cookie("refresh_token", data.refresh_token, {
         // httpOnly: true, // Không thể truy cập từ JavaScript (chống XSS)
         // secure: true, // Chỉ gửi qua HTTPS (cần bật khi deploy)
@@ -30,6 +91,7 @@ const handleLogin = async (req, res) => {
     });
 
     return res.status(200).json({
+        EC: 0,
         message: "login success",
         data: data
     })
@@ -58,8 +120,23 @@ const handleRefreshToken = async (req, res) => {
     });
 }
 
+const getAccount = async (req, res) => {
+    return res.status(200).json(req.user)
+}
+
+
+
+
+
+
+
 module.exports = {
     createUser,
+    getUser,
     handleLogin,
-    handleRefreshToken
+    handleRefreshToken,
+    getAccount,
+    putUpdateUser,
+    deleteUser
+
 }

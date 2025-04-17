@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongoose_delete = require('mongoose-delete');
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -16,9 +17,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    role: String,
+    role: {
+        type: String,
+        enum: ['admin', 'customer', 'shipper'],
+        default: 'customer'
+    },
 });
 
+userSchema.plugin(mongoose_delete, { overrideMethods: 'all' });
 const User = mongoose.model('user', userSchema);
 
 module.exports = User;
