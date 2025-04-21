@@ -45,7 +45,7 @@ const putUpdateUser = async (req, res) => {
 }
 
 const deleteUser = async (req, res) => {
-    let result = await deleteAUserService(req.body.userId)
+    let result = await deleteAUserService(req.query.userId)
 
 
     if (!result.error) {
@@ -56,7 +56,7 @@ const deleteUser = async (req, res) => {
         });
     } else {
         return res.status(400).json({
-            message: "Xóa không thành công",
+            message: "Đã có lỗi xảy ra!",
             errorCode: 1,
         });
     }
