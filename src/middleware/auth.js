@@ -25,6 +25,13 @@ const auth = (req, res, next) => {
                     errorCode: 403,
                 });
             }
+            // phân quyền admin crud category
+            if (req.path === "/category" && req.method === "POST" && decoded.role !== "admin") {
+                return res.status(403).json({
+                    message: "Forbidden. You are not allowed to post a category.",
+                    errorCode: 403,
+                });
+            }
             next();
         } catch (error) {
             return res.status(401).json({
