@@ -1,6 +1,7 @@
 const express = require('express');
 const { createUser, handleLogin, handleRefreshToken, getUser, getAccount, putUpdateUser, deleteUser } = require('../controllers/userController');
 const auth = require('../middleware/auth');
+const { createCategory, getCategory, deleteCategory } = require('../controllers/categoryController');
 
 const routerAPI = express.Router();
 
@@ -20,6 +21,12 @@ routerAPI.post('/login', handleLogin)
 routerAPI.post("/refresh-token", handleRefreshToken);
 
 routerAPI.get("/account", getAccount)
+
+routerAPI.post('/category', createCategory)
+
+routerAPI.get('/category', getCategory)
+
+routerAPI.delete('/category', deleteCategory)
 
 
 
